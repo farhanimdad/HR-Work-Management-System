@@ -1,0 +1,219 @@
+<template>
+    <div class="slds-grid slds-wrap slds-gutters">
+        <!-- Section 1: Team Attendance % This Month -->
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_medium">
+            <lightning-card title="Team Attendance (This Month)" icon-name="standard:dashboard">
+                <lightning-button-icon
+                    icon-name="utility:refresh"
+                    slot="actions"
+                    alternative-text="Refresh Attendance"
+                    title="Refresh"
+                    onclick={handleRefreshAttendance}>
+                </lightning-button-icon>
+                <div class="slds-p-around_medium card-body-container slds-is-relative">
+                    <template lwc:if={isAttLoading}>
+                        <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+                    </template>
+
+                    <template lwc:elseif={hasAttError}>
+                        <div class="slds-notify slds-notify_alert slds-alert_error slds-radius_medium" role="alert">
+                            <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            <h2>{attErrorMessage}</h2>
+                        </div>
+                    </template>
+
+                    <template lwc:else>
+                        <div class="slds-grid slds-grid_vertical-align-center summary-box slds-p-around_small">
+                            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                                <div class="large-percentage slds-text-heading_large slds-text-color_success">
+                                    {teamAttendancePercentage}%
+                                </div>
+                                <div class="slds-text-title_caps slds-text-color_weak">Team Average</div>
+                            </div>
+                            <div class="slds-col slds-size_2-of-3 slds-p-left_medium">
+                                <lightning-progress-bar value={teamAttendancePercentage} size="large" variant="circular"></lightning-progress-bar>
+                                <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
+                                    Average attendance rate across all team members this month
+                                </p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+
+        <!-- Section 2: Employees Below 75% Attendance -->
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_medium">
+            <lightning-card title="Attendance Alerts (< 75%)" icon-name="standard:opportunity_risk">
+                <lightning-button-icon
+                    icon-name="utility:refresh"
+                    slot="actions"
+                    alternative-text="Refresh Alerts"
+                    title="Refresh"
+                    onclick={handleRefreshLowAtt}>
+                </lightning-button-icon>
+                <div class="slds-p-around_medium card-body-container slds-is-relative">
+                    <template lwc:if={isLowAttLoading}>
+                        <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+                    </template>
+
+                    <template lwc:elseif={hasLowAttError}>
+                        <div class="slds-notify slds-notify_alert slds-alert_error slds-radius_medium" role="alert">
+                            <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            <h2>{lowAttErrorMessage}</h2>
+                        </div>
+                    </template>
+
+                    <template lwc:elseif={isLowAttEmpty}>
+                        <div class="slds-illustration slds-illustration_small text-center slds-p-around_small">
+                            <lightning-icon icon-name="utility:check" variant="success" size="medium"></lightning-icon>
+                            <div class="slds-text-heading_small slds-m-top_xx-small">All Good!</div>
+                            <p class="slds-text-body_small slds-text-color_weak">No team members are below 75% attendance this month.</p>
+                        </div>
+                    </template>
+
+                    <template lwc:else>
+                        <ul class="slds-has-dividers_bottom-space">
+                            <template for:each={lowAttendanceList} for:item="emp">
+                                <li key={emp.employeeId} class="slds-item slds-p-vertical_x-small">
+                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <div>
+                                            <a href="javascript:void(0);" data-id={emp.employeeId} onclick={handleNavigateToEmployee} class="slds-text-heading_small emp-link">
+                                                {emp.employeeName}
+                                            </a>
+                                            <div class="slds-text-body_small slds-text-color_weak">
+                                                {emp.presentCount} of {emp.totalDays} tracked days
+                                            </div>
+                                        </div>
+                                        <span class="slds-badge slds-theme_error font-weight-bold">
+                                            {emp.attendancePercentage}%
+                                        </span>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+
+        <!-- Section 3: Pending Leave Requests -->
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_medium">
+            <lightning-card title="Pending Leave Requests" icon-name="standard:absence">
+                <lightning-button-icon
+                    icon-name="utility:refresh"
+                    slot="actions"
+                    alternative-text="Refresh Leaves"
+                    title="Refresh"
+                    onclick={handleRefreshLeaves}>
+                </lightning-button-icon>
+                <div class="slds-p-around_medium card-body-container slds-is-relative">
+                    <template lwc:if={isLeavesLoading}>
+                        <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+                    </template>
+
+                    <template lwc:elseif={hasLeavesError}>
+                        <div class="slds-notify slds-notify_alert slds-alert_error slds-radius_medium" role="alert">
+                            <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            <h2>{leavesErrorMessage}</h2>
+                        </div>
+                    </template>
+
+                    <template lwc:elseif={isLeavesEmpty}>
+                        <div class="slds-illustration slds-illustration_small text-center slds-p-around_small">
+                            <lightning-icon icon-name="utility:event" size="medium" class="slds-text-color_weak"></lightning-icon>
+                            <div class="slds-text-heading_small slds-m-top_xx-small">No Pending Requests</div>
+                            <p class="slds-text-body_small slds-text-color_weak">There are no pending leave requests awaiting approval.</p>
+                        </div>
+                    </template>
+
+                    <template lwc:else>
+                        <ul class="slds-has-dividers_bottom-space">
+                            <template for:each={pendingLeaves} for:item="leave">
+                                <li key={leave.id} class="slds-item slds-p-vertical_x-small">
+                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <div>
+                                            <a href="javascript:void(0);" data-id={leave.employeeId} onclick={handleNavigateToEmployee} class="slds-text-heading_small emp-link">
+                                                {leave.employeeName}
+                                            </a>
+                                            <div class="slds-text-body_small slds-text-color_weak">
+                                                {leave.startDate} to {leave.endDate} {leave.leaveTypeName}
+                                            </div>
+                                            <p class="slds-text-body_small slds-text-color_weak italic-text" if:true={leave.reason}>
+                                                "{leave.reason}"
+                                            </p>
+                                        </div>
+                                        <span class="slds-badge slds-theme_warning font-weight-bold">
+                                            Pending
+                                        </span>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+
+        <!-- Section 4: Upcoming Interviews (Next 7 Days) -->
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_medium">
+            <lightning-card title="Upcoming Interviews (Next 7 Days)" icon-name="standard:event">
+                <lightning-button-icon
+                    icon-name="utility:refresh"
+                    slot="actions"
+                    alternative-text="Refresh Interviews"
+                    title="Refresh"
+                    onclick={handleRefreshInterviews}>
+                </lightning-button-icon>
+                <div class="slds-p-around_medium card-body-container slds-is-relative">
+                    <template lwc:if={isInterviewsLoading}>
+                        <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+                    </template>
+
+                    <template lwc:elseif={hasInterviewsError}>
+                        <div class="slds-notify slds-notify_alert slds-alert_error slds-radius_medium" role="alert">
+                            <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            <h2>{interviewsErrorMessage}</h2>
+                        </div>
+                    </template>
+
+                    <template lwc:elseif={isInterviewsEmpty}>
+                        <div class="slds-illustration slds-illustration_small text-center slds-p-around_small">
+                            <lightning-icon icon-name="utility:date_time" size="medium" class="slds-text-color_weak"></lightning-icon>
+                            <div class="slds-text-heading_small slds-m-top_xx-small">No Upcoming Interviews</div>
+                            <p class="slds-text-body_small slds-text-color_weak">No interviews scheduled for the team in the next 7 days.</p>
+                        </div>
+                    </template>
+
+                    <template lwc:else>
+                        <ul class="slds-has-dividers_bottom-space">
+                            <template for:each={upcomingInterviews} for:item="intv">
+                                <li key={intv.id} class="slds-item slds-p-vertical_x-small">
+                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <div>
+                                            <div class="slds-text-heading_small">
+                                                Candidate: {intv.candidateName}
+                                            </div>
+                                            <div class="slds-text-body_small slds-text-color_weak">
+                                                Interviewer: 
+                                                <a href="javascript:void(0);" data-id={intv.interviewerId} onclick={handleNavigateToEmployee} class="emp-link">
+                                                    {intv.interviewerName}
+                                                </a>
+                                            </div>
+                                            <div class="slds-text-body_small slds-text-color_weak">
+                                                {intv.interviewDate} | Round: {intv.round}
+                                            </div>
+                                        </div>
+                                        <span class="slds-badge slds-theme_info font-weight-bold">
+                                            Scheduled
+                                        </span>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+    </div>
+</template>

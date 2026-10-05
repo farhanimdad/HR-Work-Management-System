@@ -1,0 +1,41 @@
+.large-percentage {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.spinner-container {
+    min-height: 160px;
+}
+
+.summary-box {
+    background-color: var(--slds-g-color-neutral-base-95, #f8f9fa);
+    border-radius: 8px;
+    border: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+}
+
+.stat-card {
+    border-radius: 8px;
+    background-color: var(--slds-g-color-neutral-base-95, #ffffff);
+    border: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.stat-number {
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+}
+
+.text-center {
+    text-align: center;
+}

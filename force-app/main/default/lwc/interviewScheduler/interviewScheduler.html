@@ -1,0 +1,159 @@
+<template>
+    <lightning-card title="Schedule Interview" icon-name="standard:event">
+        <div class="slds-p-around_medium slds-is-relative">
+            <!-- Loading Spinner -->
+            <template lwc:if={isLoading}>
+                <lightning-spinner alternative-text="Processing..." size="medium"></lightning-spinner>
+            </template>
+
+            <!-- Error Banner if options fail to load -->
+            <template lwc:if={hasWireError}>
+                <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_medium slds-radius_medium" role="alert">
+                    <lightning-icon icon-name="utility:error" alternative-text="Error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                    <h2>{wireErrorMessage}</h2>
+                </div>
+            </template>
+
+            <!-- Form -->
+            <div class="slds-form slds-form_stacked">
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <!-- Candidate Selector -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                        <lightning-combobox
+                            name="candidate"
+                            label="Candidate"
+                            placeholder="Select Candidate"
+                            value={candidateId}
+                            options={candidateOptions}
+                            onchange={handleInputChange}
+                            required
+                            data-id="candidateField">
+                        </lightning-combobox>
+                    </div>
+
+                    <!-- Interviewer Selector -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                        <lightning-combobox
+                            name="interviewer"
+                            label="Interviewer"
+                            placeholder="Select Interviewer"
+                            value={interviewerId}
+                            options={interviewerOptions}
+                            onchange={handleInputChange}
+                            required
+                            data-id="interviewerField">
+                        </lightning-combobox>
+                    </div>
+
+                    <!-- Interview Date -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_small">
+                        <lightning-input
+                            type="date"
+                            name="interviewDate"
+                            label="Interview Date"
+                            value={interviewDate}
+                            onchange={handleInputChange}
+                            min={minDate}
+                            required
+                            data-id="dateField">
+                        </lightning-input>
+                    </div>
+
+                    <!-- Start Time -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_small">
+                        <lightning-input
+                            type="time"
+                            name="startTime"
+                            label="Start Time"
+                            value={startTime}
+                            onchange={handleInputChange}
+                            required
+                            data-id="startTimeField">
+                        </lightning-input>
+                    </div>
+
+                    <!-- End Time -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_small">
+                        <lightning-input
+                            type="time"
+                            name="endTime"
+                            label="End Time"
+                            value={endTime}
+                            onchange={handleInputChange}
+                            required
+                            data-id="endTimeField">
+                        </lightning-input>
+                    </div>
+
+                    <!-- Round -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                        <lightning-combobox
+                            name="round"
+                            label="Interview Round"
+                            placeholder="Select Round"
+                            value={round}
+                            options={roundOptions}
+                            onchange={handleInputChange}
+                            required
+                            data-id="roundField">
+                        </lightning-combobox>
+                    </div>
+
+                    <!-- Mode -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                        <lightning-combobox
+                            name="mode"
+                            label="Mode"
+                            placeholder="Select Mode"
+                            value={mode}
+                            options={modeOptions}
+                            onchange={handleInputChange}
+                            data-id="modeField">
+                        </lightning-combobox>
+                    </div>
+
+                    <!-- Meeting Link -->
+                    <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+                        <lightning-input
+                            type="url"
+                            name="meetingLink"
+                            label="Meeting Link"
+                            placeholder="https://meet.google.com/..."
+                            value={meetingLink}
+                            onchange={handleInputChange}
+                            data-id="meetingLinkField">
+                        </lightning-input>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="slds-col slds-size_1-of-1 slds-m-bottom_medium">
+                        <lightning-textarea
+                            name="notes"
+                            label="Notes"
+                            placeholder="Additional details or instructions..."
+                            value={notes}
+                            onchange={handleInputChange}
+                            data-id="notesField">
+                        </lightning-textarea>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="slds-grid slds-grid_align-end slds-m-top_medium">
+                    <lightning-button
+                        label="Clear Form"
+                        variant="neutral"
+                        onclick={handleReset}
+                        class="slds-m-right_small">
+                    </lightning-button>
+                    <lightning-button
+                        label="Schedule Interview"
+                        variant="brand"
+                        onclick={handleSave}
+                        disabled={isSaving}>
+                    </lightning-button>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>

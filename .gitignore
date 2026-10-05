@@ -1,0 +1,26 @@
+# Salesforce / SFDX CLI
+.sfdx/
+.sf/
+.local-dev-server/
+
+# Node dependencies
+node_modules/
+
+# OS / Temp scripts
+.DS_Store
+Thumbs.db
+*.log
+*.apex
+inspect_*.apex
+describe_*.apex
+test_*.apex
+
+# Secrets and Auth
+*.key
+*.pem
+*.p12
+*.crt
+*auth*
+*token*
+*secret*
+*password*

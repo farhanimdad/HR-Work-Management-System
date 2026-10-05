@@ -1,0 +1,8 @@
+.slds-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.slds-notify_alert {
+    border-radius: 8px;
+}

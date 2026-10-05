@@ -1,0 +1,37 @@
+.large-percentage {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.card-body-container {
+    min-height: 140px;
+}
+
+.summary-box {
+    background-color: var(--slds-g-color-neutral-base-95, #f8f9fa);
+    border-radius: 8px;
+    border: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+}
+
+.emp-link {
+    color: var(--slds-g-color-brand-base-50, #0176d3);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.emp-link:hover {
+    text-decoration: underline;
+}
+
+.italic-text {
+    font-style: italic;
+}
+
+.font-weight-bold {
+    font-weight: 700;
+}
+
+.text-center {
+    text-align: center;
+}

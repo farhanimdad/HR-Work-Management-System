@@ -1,0 +1,128 @@
+<template>
+    <lightning-card title="Attendance Dashboard" icon-name="standard:event">
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+            <!-- Header with Month Selector -->
+            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_medium">
+                <div class="slds-col">
+                    <p class="slds-text-title_caps slds-text-color_weak">Monthly Overview</p>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-3">
+                    <lightning-combobox
+                        name="monthSelector"
+                        label="Select Month"
+                        variant="label-hidden"
+                        value={monthYearValue}
+                        options={monthOptions}
+                        onchange={handleMonthChange}>
+                    </lightning-combobox>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <template lwc:if={isLoading}>
+                <div class="spinner-container slds-is-relative slds-p-around_large text-center">
+                    <lightning-spinner alternative-text="Loading attendance data..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Error State -->
+            <template lwc:elseif={hasError}>
+                <div class="slds-notify slds-notify_alert slds-alert_error slds-m-around_x-small slds-radius_medium" role="alert">
+                    <lightning-icon icon-name="utility:error" alternative-text="Error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                    <h2 class="slds-text-body_regular">{errorMessage}</h2>
+                </div>
+            </template>
+
+            <!-- Empty State -->
+            <template lwc:elseif={isEmpty}>
+                <div class="slds-illustration slds-illustration_small slds-p-around_medium text-center">
+                    <lightning-icon icon-name="utility:event" size="large" class="slds-m-bottom_x-small slds-text-color_weak"></lightning-icon>
+                    <div class="slds-text-heading_small slds-m-top_x-small">No Attendance Recorded</div>
+                    <p class="slds-text-body_regular slds-text-color_weak slds-m-top_xx-small">
+                        No attendance records found for this employee in the selected month.
+                    </p>
+                </div>
+            </template>
+
+            <!-- Data State -->
+            <template lwc:elseif={hasData}>
+                <div class="dashboard-content">
+                    <!-- Progress & Percentage -->
+                    <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_medium slds-p-around_small summary-box">
+                        <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                            <div class="large-percentage slds-text-heading_large slds-text-color_success">
+                                {attendancePercentage}%
+                            </div>
+                            <div class="slds-text-title_caps slds-text-color_weak">Attendance Rate</div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-3 slds-p-left_medium">
+                            <lightning-progress-bar
+                                value={stats.attendancePercentage}
+                                size="large"
+                                variant="circular">
+                            </lightning-progress-bar>
+                            <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
+                                {stats.presentCount} of {stats.totalDays} tracked days present
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 2x2 Grid of Counts -->
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <!-- Present Count -->
+                        <div class="slds-col slds-size_1-of-2 slds-m-bottom_small">
+                            <div class="stat-card stat-card_present slds-p-around_small slds-box slds-box_x-small">
+                                <div class="slds-grid slds-grid_vertical-align-center">
+                                    <lightning-icon icon-name="utility:check" variant="success" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                    <div>
+                                        <div class="stat-number slds-text-heading_medium">{stats.presentCount}</div>
+                                        <div class="stat-label slds-text-title_caps slds-text-color_weak">Present / WFH</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Absent Count -->
+                        <div class="slds-col slds-size_1-of-2 slds-m-bottom_small">
+                            <div class="stat-card stat-card_absent slds-p-around_small slds-box slds-box_x-small">
+                                <div class="slds-grid slds-grid_vertical-align-center">
+                                    <lightning-icon icon-name="utility:close" variant="error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                    <div>
+                                        <div class="stat-number slds-text-heading_medium">{stats.absentCount}</div>
+                                        <div class="stat-label slds-text-title_caps slds-text-color_weak">Absent</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Leave Count -->
+                        <div class="slds-col slds-size_1-of-2">
+                            <div class="stat-card stat-card_leave slds-p-around_small slds-box slds-box_x-small">
+                                <div class="slds-grid slds-grid_vertical-align-center">
+                                    <lightning-icon icon-name="utility:event" variant="warning" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                    <div>
+                                        <div class="stat-number slds-text-heading_medium">{stats.leaveCount}</div>
+                                        <div class="stat-label slds-text-title_caps slds-text-color_weak">Leave</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Late Count -->
+                        <div class="slds-col slds-size_1-of-2">
+                            <div class="stat-card stat-card_late slds-p-around_small slds-box slds-box_x-small">
+                                <div class="slds-grid slds-grid_vertical-align-center">
+                                    <lightning-icon icon-name="utility:clock" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                    <div>
+                                        <div class="stat-number slds-text-heading_medium">{stats.lateCount}</div>
+                                        <div class="stat-label slds-text-title_caps slds-text-color_weak">Late Days</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

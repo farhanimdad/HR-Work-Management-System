@@ -1,0 +1,66 @@
+<template>
+    <lightning-card title="Recruitment Stage Pipeline" icon-name="standard:process">
+        <div class="slds-p-around_medium slds-is-relative">
+            <!-- Loading Spinner -->
+            <template lwc:if={isLoading}>
+                <div class="spinner-container slds-p-around_large text-center">
+                    <lightning-spinner alternative-text="Loading recruitment stage..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Error State -->
+            <template lwc:elseif={hasError}>
+                <div class="slds-notify slds-notify_alert slds-alert_error slds-m-around_x-small slds-radius_medium" role="alert">
+                    <lightning-icon icon-name="utility:error" alternative-text="Error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                    <h2 class="slds-text-body_regular">{errorMessage}</h2>
+                </div>
+            </template>
+
+            <!-- Content State -->
+            <template lwc:elseif={recordData}>
+                <!-- Path Progress Indicator -->
+                <div class="slds-m-bottom_medium slds-scrollable_x">
+                    <lightning-progress-indicator
+                        current-step={currentStage}
+                        type="path"
+                        variant="base">
+                        <template for:each={stageOptions} for:item="step">
+                            <lightning-progress-step
+                                label={step.label}
+                                value={step.value}
+                                key={step.value}>
+                            </lightning-progress-step>
+                        </template>
+                    </lightning-progress-indicator>
+                </div>
+
+                <!-- Footer Summary & Actions -->
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-border_top slds-p-top_medium">
+                    <div class="slds-col">
+                        <span class="slds-text-title_caps slds-text-color_weak slds-m-right_x-small">Current Stage:</span>
+                        <span class="slds-badge slds-theme_success font-weight-bold">{currentStage}</span>
+                    </div>
+
+                    <div class="slds-col slds-no-flex">
+                        <lightning-button
+                            label="Mark as Rejected"
+                            variant="destructive-text"
+                            icon-name="utility:close"
+                            onclick={handleMarkRejected}
+                            disabled={isRejectDisabled}
+                            class="slds-m-right_small">
+                        </lightning-button>
+                        <lightning-button
+                            label="Move to Next Stage"
+                            variant="brand"
+                            icon-name="utility:forward"
+                            icon-position="right"
+                            onclick={handleNextStage}
+                            disabled={isNextDisabled}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

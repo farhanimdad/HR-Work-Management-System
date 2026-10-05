@@ -1,0 +1,57 @@
+<template>
+    <lightning-card title="HR Quick Actions" icon-name="standard:flow">
+        <div class="slds-p-around_medium">
+            <div class="slds-grid slds-wrap slds-gutters">
+                <!-- New Employee -->
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-5 slds-m-bottom_small">
+                    <button class="action-card slds-button slds-button_neutral" onclick={handleNewEmployee}>
+                        <div class="action-card-content">
+                            <lightning-icon icon-name="utility:user_add" size="medium" class="slds-m-bottom_x-small icon-primary"></lightning-icon>
+                            <span class="action-title">New Employee</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Schedule Interview -->
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-5 slds-m-bottom_small">
+                    <button class="action-card slds-button slds-button_neutral" onclick={handleScheduleInterview}>
+                        <div class="action-card-content">
+                            <lightning-icon icon-name="utility:event" size="medium" class="slds-m-bottom_x-small icon-brand"></lightning-icon>
+                            <span class="action-title">Schedule Interview</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Mark Attendance -->
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-5 slds-m-bottom_small">
+                    <button class="action-card slds-button slds-button_neutral" onclick={handleMarkAttendance}>
+                        <div class="action-card-content">
+                            <lightning-icon icon-name="utility:checkin" size="medium" class="slds-m-bottom_x-small icon-success"></lightning-icon>
+                            <span class="action-title">Mark Attendance</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- New Leave Request -->
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-5 slds-m-bottom_small">
+                    <button class="action-card slds-button slds-button_neutral" onclick={handleNewLeaveRequest}>
+                        <div class="action-card-content">
+                            <lightning-icon icon-name="utility:date_input" size="medium" class="slds-m-bottom_x-small icon-warning"></lightning-icon>
+                            <span class="action-title">New Leave Request</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- View Reports -->
+                <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-2 slds-medium-size_1-of-5 slds-m-bottom_small">
+                    <button class="action-card slds-button slds-button_neutral" onclick={handleViewReports}>
+                        <div class="action-card-content">
+                            <lightning-icon icon-name="utility:chart" size="medium" class="slds-m-bottom_x-small icon-info"></lightning-icon>
+                            <span class="action-title">View Reports</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>
